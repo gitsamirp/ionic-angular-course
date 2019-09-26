@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { DiscoverPage } from './discover.page';
+import { CreateBookingComponent } from '../../bookings/create-booking/create-booking.component';
 
 const routes: Routes = [
   {

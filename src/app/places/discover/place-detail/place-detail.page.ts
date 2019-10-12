@@ -59,7 +59,10 @@ export class PlaceDetailPage implements OnInit {
 
   openBookingModel(mode: 'select'|'random') {
     console.log(mode);
-    this.modalCtrl.create({component: CreateBookingComponent, componentProps: {selectedPlace: this.place}}).then(
+    this.modalCtrl.create({
+      component: CreateBookingComponent,
+      componentProps: {selectedPlace: this.place, selectedMode: mode }
+    }).then(
       modalEl => {
         modalEl.present();
         return modalEl.onDidDismiss();

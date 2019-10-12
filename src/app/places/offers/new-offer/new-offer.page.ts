@@ -38,6 +38,7 @@ export class NewOfferPage implements OnInit {
 
   onCreateOffer() {
     console.log('Creating Offerred Place');
+    console.log(this.form);
   }
 
 }

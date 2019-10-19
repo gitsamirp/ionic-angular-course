@@ -1,17 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NavController, ModalController, ActionSheetController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PlacesService } from '../../places.service';
 import { CreateBookingComponent } from '../../../bookings/create-booking/create-booking.component';
 import { Place } from '../../place.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-place-detail',
   templateUrl: './place-detail.page.html',
   styleUrls: ['./place-detail.page.scss'],
 })
-export class PlaceDetailPage implements OnInit {
+export class PlaceDetailPage implements OnInit, OnDestroy {
   private place: Place;
+  private placeSub: Subscription;
+
   constructor(
     private navCtrl: NavController,
     private route: ActivatedRoute,
@@ -26,7 +29,9 @@ export class PlaceDetailPage implements OnInit {
         this.navCtrl.navigateBack('/places/tabs/discover');
         return;
       }
-      this.place = this.placesService.getPlace(paramMap.get('placeId'));
+      this.placeSub = this.placesService.getPlace(paramMap.get('placeId')).subscribe(place => {
+        this.place = place;
+      });
     });
   }
 
@@ -73,6 +78,13 @@ export class PlaceDetailPage implements OnInit {
         console.log("BOOKED!");
       }
     });
+  }
+
+  //we need this to avoid memory leak, need to manage lifecycle
+  ngOnDestroy() {
+    if (this.placeSub) {
+      this.placeSub.unsubscribe();
+    }
   }
 
 }

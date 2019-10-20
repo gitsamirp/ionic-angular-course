@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NavController, ModalController, ActionSheetController } from '@ionic/angular';
+import { NavController, ModalController, ActionSheetController, LoadingController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PlacesService } from '../../places.service';
 import { CreateBookingComponent } from '../../../bookings/create-booking/create-booking.component';
 import { Place } from '../../place.model';
 import { Subscription } from 'rxjs';
+import { BookingService } from 'src/app/bookings/booking.service';
 
 @Component({
   selector: 'app-place-detail',
@@ -12,7 +13,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./place-detail.page.scss'],
 })
 export class PlaceDetailPage implements OnInit, OnDestroy {
-  private place: Place;
+  public  place: Place;
   private placeSub: Subscription;
 
   constructor(
@@ -20,7 +21,9 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private placesService: PlacesService,
     private modalCtrl: ModalController,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private bookingService: BookingService,
+    private loadingCtrl: LoadingController
     ) { }
 
   ngOnInit() {
@@ -75,7 +78,14 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
     ).then(resultData => {
       console.log(resultData.data, resultData.role);
       if (resultData.role === 'confirm') {
-        console.log("BOOKED!");
+        this.loadingCtrl.create({message: "Booking Place"}).then(loadingEl => {
+          loadingEl.present();
+          const data = resultData.data.bookingData;
+          this.bookingService.addBooking(this.place.id, this.place.title, this.place.imageUrl, data.firstName, data.lastName, data.guestNumber, data.startDate, data.endDate).subscribe(() => {
+            loadingEl.dismiss();
+          });
+          console.log("BOOKED!");
+        });
       }
     });
   }

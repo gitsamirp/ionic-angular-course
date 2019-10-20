@@ -22,9 +22,10 @@ export class BookingsPage implements OnInit, OnDestroy {
     });
   }
 
-  onCancelBooking(offerId: string, slidingEl: IonItemSliding) {
+  onCancelBooking(bookingId: string, slidingEl: IonItemSliding) {
     slidingEl.close();
     // cancel booking with id offer id
+    this.bookingService.cancelBooking(bookingId).subscribe();
   }
 
   ngOnDestroy() {

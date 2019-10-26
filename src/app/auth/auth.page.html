@@ -27,8 +27,8 @@
           <ion-button color="primary" fill="clear" expand="block" type="button"
           (click)="onSwitchAuthMode()"
           >Switch to {{ isLogin ? 'Sign Up' : 'Login'}}</ion-button>
-  <ion-button color="primary" (click)="onLogin()" expand="block" type="submit">
-    Login
+  <ion-button color="primary" expand="block" type="submit">
+    {{ isLogin ? 'Login' : ' Signup' }}
   </ion-button>
       </ion-col>
     </ion-row>

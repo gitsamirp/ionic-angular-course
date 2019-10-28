@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Place } from './place.model';
 import { AuthService } from '../auth/auth.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, pipe } from 'rxjs';
 import { take, map, tap, delay, switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
@@ -75,29 +75,35 @@ export class PlacesService {
   }
 
   addPlace(title: string, description: string, price: number, availableFrom: Date, availableTo: Date) {
-    const newPlace = new Place(
-      Math.random().toString(),
-      title,
-      description,
-      'https://amp.businessinsider.com/images/5ad8ae04cd862425008b4898-750-563.jpg',
-      price,
-      availableFrom,
-      availableTo,
-      this.authService.userId);
+    let newPlace: Place;
+    this.authService.userId.pipe(take(1), switchMap(userId => {
+      if (!userId) {
+        throw new Error("No User Id");
+      }
 
-      let id: string;
-
-    return this.httpClient.post<{name: string}>(
-      'https://ionic-angular-course-fc7a2.firebaseio.com/offered-places.json',
-       { ...newPlace, id: null })
-    .pipe(
+      newPlace = new Place(
+        Math.random().toString(),
+        title,
+        description,
+        'https://amp.businessinsider.com/images/5ad8ae04cd862425008b4898-750-563.jpg',
+        price,
+        availableFrom,
+        availableTo,
+        userId);
+  
+        let id: string;
+  
+      return this.httpClient.post<{name: string}>(
+        'https://ionic-angular-course-fc7a2.firebaseio.com/offered-places.json',
+         { ...newPlace, id: null });
+    }),
       switchMap(resData => {
         id = resData.name;
         return this.places;
       }),
       take(1),
       tap(places => {
-        newPlace.id = id;
+        newPlace.id = 'test';
         this._places.next(places.concat(newPlace));
       })
 

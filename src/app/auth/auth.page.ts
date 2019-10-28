@@ -46,7 +46,7 @@ export class AuthPage implements OnInit {
           } else if (code === 'EMAIL_NOT_FOUND') {
             messaage = 'This email address was not found!';
           } else if (code === 'INVALID_PASSWORD') {
-            messaage = 'incorrect password!';
+            messaage = 'incorrect password !';
           }
           this.showAlert(messaage);
         });
